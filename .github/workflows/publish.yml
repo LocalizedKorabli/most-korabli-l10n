@@ -30,8 +30,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install p7zip
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq p7zip-full
 
       - name: Configure AWS CLI for R2
         shell: bash

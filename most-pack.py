@@ -53,67 +53,17 @@ def ensure_dir(path):
     path.mkdir(parents=True, exist_ok=True)
 
 
-def get_version_from_pe(exe_path: Path) -> str:
-    """Extract ProductVersion from a PE executable using pefile."""
-    import pefile
-    pe = pefile.PE(str(exe_path))
-
-    # Try to parse data directories to ensure version info is available
-    try:
-        pe.parse_data_directories()
-    except Exception:
-        pass
-
-    # Strategy 1: FileInfo → StringTable entries (modern pefile structure)
-    if hasattr(pe, "FileInfo"):
-        for file_info in pe.FileInfo:
-            if hasattr(file_info, "StringTable"):
-                for st in file_info.StringTable:
-                    if hasattr(st, "entries"):
-                        for key, value in st.entries.items():
-                            k = key.decode("utf-8", errors="replace") if isinstance(key, bytes) else str(key)
-                            if k.lower() == "productversion":
-                                return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
-
-    # Strategy 2: VS_VERSIONINFO → StringFileInfo → entries
-    if hasattr(pe, "VS_VERSIONINFO"):
-        for ver in pe.VS_VERSIONINFO:
-            if hasattr(ver, "StringFileInfo"):
-                for sfi in ver.StringFileInfo:
-                    for st in sfi:
-                        if isinstance(st, list):
-                            for entry in st:
-                                if isinstance(entry, dict):
-                                    name = entry.get("name", b"")
-                                    n = name.decode("utf-8", errors="replace") if isinstance(name, bytes) else str(name)
-                                    if n.lower() == "productversion":
-                                        val = entry.get("value", b"")
-                                        return val.decode("utf-8", errors="replace") if isinstance(val, bytes) else str(val)
-                        elif hasattr(st, "entries"):
-                            for key, value in st.entries.items():
-                                k = key.decode("utf-8", errors="replace") if isinstance(key, bytes) else str(key)
-                                if k.lower() == "productversion":
-                                    return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
-
-    # Strategy 3: raw search through all FileInfo entries
-    for file_info in getattr(pe, "FileInfo", []):
-        for attr_name in dir(file_info):
-            try:
-                attr = getattr(file_info, attr_name)
-                if hasattr(attr, "entries"):
-                    for key, value in attr.entries.items():
-                        k = key.decode("utf-8", errors="replace") if isinstance(key, bytes) else str(key)
-                        if k.lower() == "productversion":
-                            return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
-            except Exception:
-                continue
-
-    raise ValueError(f"Cannot read ProductVersion from {exe_path}")
-
-
 def get_product_version(exe_path: Path) -> str:
-    """Get ProductVersion from a PE file."""
-    return get_version_from_pe(exe_path)
+    """Get ProductVersion from a PE file using PowerShell (reliable on Linux runners)."""
+    result = subprocess.run(
+        ["pwsh", "-NoProfile", "-Command",
+         "(Get-Item '{}').VersionInfo.ProductVersion".format(exe_path)],
+        capture_output=True, text=True
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        log_error(f"Failed to read ProductVersion from {exe_path}: {result.stderr}")
+        raise ValueError(f"Cannot read ProductVersion from {exe_path}")
+    return result.stdout.strip()
 
 
 def get_date_version_from_git(file_path: Path) -> str:
