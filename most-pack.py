@@ -53,45 +53,93 @@ def ensure_dir(path):
     path.mkdir(parents=True, exist_ok=True)
 
 
-def get_file_version_from_pe(exe_path: Path) -> str:
+def get_version_from_pe(exe_path: Path) -> str:
     """Extract ProductVersion from a PE executable using pefile."""
     import pefile
     pe = pefile.PE(str(exe_path))
 
-    # Navigate the version info structure
-    if hasattr(pe, "FileInfo") and pe.FileInfo:
+    # Try to parse data directories to ensure version info is available
+    try:
+        pe.parse_data_directories()
+    except Exception:
+        pass
+
+    # Strategy 1: FileInfo → StringTable entries (modern pefile structure)
+    if hasattr(pe, "FileInfo"):
         for file_info in pe.FileInfo:
             if hasattr(file_info, "StringTable"):
                 for st in file_info.StringTable:
                     if hasattr(st, "entries"):
-                        for key_bytes, value_bytes in st.entries.items():
-                            key = key_bytes.decode("utf-8", errors="replace") if isinstance(key_bytes, bytes) else key_bytes
-                            if key == "ProductVersion":
-                                return value_bytes.decode("utf-8", errors="replace") if isinstance(value_bytes, bytes) else value_bytes
+                        for key, value in st.entries.items():
+                            k = key.decode("utf-8", errors="replace") if isinstance(key, bytes) else str(key)
+                            if k.lower() == "productversion":
+                                return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
+
+    # Strategy 2: VS_VERSIONINFO → StringFileInfo → entries
+    if hasattr(pe, "VS_VERSIONINFO"):
+        for ver in pe.VS_VERSIONINFO:
+            if hasattr(ver, "StringFileInfo"):
+                for sfi in ver.StringFileInfo:
+                    for st in sfi:
+                        if isinstance(st, list):
+                            for entry in st:
+                                if isinstance(entry, dict):
+                                    name = entry.get("name", b"")
+                                    n = name.decode("utf-8", errors="replace") if isinstance(name, bytes) else str(name)
+                                    if n.lower() == "productversion":
+                                        val = entry.get("value", b"")
+                                        return val.decode("utf-8", errors="replace") if isinstance(val, bytes) else str(val)
+                        elif hasattr(st, "entries"):
+                            for key, value in st.entries.items():
+                                k = key.decode("utf-8", errors="replace") if isinstance(key, bytes) else str(key)
+                                if k.lower() == "productversion":
+                                    return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
+
+    # Strategy 3: raw search through all FileInfo entries
+    for file_info in getattr(pe, "FileInfo", []):
+        for attr_name in dir(file_info):
+            try:
+                attr = getattr(file_info, attr_name)
+                if hasattr(attr, "entries"):
+                    for key, value in attr.entries.items():
+                        k = key.decode("utf-8", errors="replace") if isinstance(key, bytes) else str(key)
+                        if k.lower() == "productversion":
+                            return value.decode("utf-8", errors="replace") if isinstance(value, bytes) else str(value)
+            except Exception:
+                continue
 
     raise ValueError(f"Cannot read ProductVersion from {exe_path}")
 
 
-def get_file_version_from_exiftool(exe_path: Path) -> str:
-    """Fallback: use exiftool to get ProductVersion."""
-    output = run(["exiftool", "-ProductVersion", "-s3", str(exe_path)])
-    return output if output else "0.0.0.0"
-
-
 def get_product_version(exe_path: Path) -> str:
-    """Get ProductVersion, trying pefile first then exiftool."""
-    try:
-        return get_file_version_from_pe(exe_path)
-    except Exception as e:
-        log_info(f"pefile failed for {exe_path.name}: {e}, trying exiftool...")
-        try:
-            return get_file_version_from_exiftool(exe_path)
-        except Exception as e2:
-            log_error(f"Cannot read version from {exe_path}: {e2}")
-            return "0.0.0.0"
+    """Get ProductVersion from a PE file."""
+    return get_version_from_pe(exe_path)
 
 
-def get_date_version(file_path: Path) -> str:
+def get_date_version_from_git(file_path: Path) -> str:
+    """Get last commit date of a file formatted as YY.M.D (e.g. '26.5.19')."""
+    # Walk up until we find the .git directory (repo root)
+    repo_root = file_path
+    for _ in range(10):
+        if (repo_root / ".git").exists():
+            break
+        repo_root = repo_root.parent
+
+    result = subprocess.run(
+        ["git", "log", "-1", "--format=%ci", "--", str(file_path.relative_to(repo_root))],
+        capture_output=True, text=True, cwd=str(repo_root)
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        # Fallback: use current file mtime
+        return get_date_version_from_mtime(file_path)
+
+    # Format: "2026-05-19 12:34:56 +0800" → "26.5.19"
+    date_str = result.stdout.strip().split()[0]  # "2026-05-19"
+    parts = date_str.split("-")
+    return f"{int(parts[0]) % 100}.{int(parts[1])}.{int(parts[2])}"
+
+
+def get_date_version_from_mtime(file_path: Path) -> str:
     """Get file modification date formatted as YY.M.D (e.g. '26.5.19')."""
     mtime = os.path.getmtime(file_path)
     dt = datetime.fromtimestamp(mtime)
@@ -168,14 +216,6 @@ def main():
 
     log_info(f"Loaded {len(locales)} locales: {', '.join(locales.keys())}")
 
-    # ─── Check tools ─────────────────────────────────────────
-    try:
-        run(["7z"], check=False)
-    except Exception:
-        log_info("Installing p7zip...")
-        run(["sudo", "apt-get", "update", "-qq"])
-        run(["sudo", "apt-get", "install", "-y", "-qq", "p7zip-full"])
-
     # ─── Process each language ───────────────────────────────
     new_entries = []
     temp_dir = Path(tempfile.mkdtemp(prefix="most-pack-"))
@@ -200,7 +240,7 @@ def main():
                 continue
 
             supported_most_version = get_product_version(exe_path)
-            app_version = get_date_version(exe_path)
+            app_version = get_date_version_from_git(exe_path)
             log_info(f"  Supported MOST: {supported_most_version}")
             log_info(f"  App version: {app_version}")
 
@@ -209,7 +249,7 @@ def main():
             if mods_dir.exists():
                 mod_files = sorted(mods_dir.iterdir())
                 if mod_files:
-                    mods_version = get_date_version(mod_files[0])
+                    mods_version = get_date_version_from_git(mod_files[0])
             log_info(f"  Mods version: {mods_version}")
 
             # Create archives
