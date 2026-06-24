@@ -190,16 +190,16 @@ def main():
                 continue
 
             supported_most_version = get_product_version(exe_path)
-            app_version = get_date_version_from_git(exe_path)
+            app_version = get_date_version_from_git(app_dir)
             log_info(f"  Supported MOST: {supported_most_version}")
             log_info(f"  App version: {app_version}")
 
-            # Get mods version from first file in mods/
+            # Get mods version from mods/ directory
             mods_version = app_version  # fallback
             if mods_dir.exists():
                 mod_files = sorted(mods_dir.iterdir())
                 if mod_files:
-                    mods_version = get_date_version_from_git(mod_files[0])
+                    mods_version = get_date_version_from_git(mods_dir)
             log_info(f"  Mods version: {mods_version}")
 
             # Create archives
