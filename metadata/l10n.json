@@ -17,12 +17,12 @@
         "name": "简体中文",
         "l10n_app": {
             "path": "https://dl.localizedkorabli.org/lateral/most/zh_CN/most_l10n_app.7z",
-            "version": "26.6.24",
+            "version": "26.6.18",
             "supported_most_version": "3.1.5.3"
         },
         "l10n_mods": {
             "path": "https://dl.localizedkorabli.org/lateral/most/zh_CN/most_l10n_mods.7z",
-            "version": "26.6.24"
+            "version": "26.6.18"
         }
     }
 ]
