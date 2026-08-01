@@ -4,12 +4,12 @@
         "name": "English",
         "l10n_app": {
             "path": "https://dl.localizedkorabli.org/lateral/most/en_US/most_l10n_app.7z",
-            "version": "26.6.24",
-            "supported_most_version": "3.1.5.3"
+            "version": "26.8.2",
+            "supported_most_version": "3.2.1.0"
         },
         "l10n_mods": {
             "path": "https://dl.localizedkorabli.org/lateral/most/en_US/most_l10n_mods.7z",
-            "version": "26.6.24"
+            "version": "26.8.2"
         }
     },
     {
@@ -17,12 +17,12 @@
         "name": "简体中文",
         "l10n_app": {
             "path": "https://dl.localizedkorabli.org/lateral/most/zh_CN/most_l10n_app.7z",
-            "version": "26.7.9",
-            "supported_most_version": "3.1.5.3"
+            "version": "26.8.2",
+            "supported_most_version": "3.2.1.0"
         },
         "l10n_mods": {
             "path": "https://dl.localizedkorabli.org/lateral/most/zh_CN/most_l10n_mods.7z",
-            "version": "26.7.9"
+            "version": "26.8.2"
         }
     }
 ]
