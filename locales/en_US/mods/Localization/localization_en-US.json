@@ -394,7 +394,7 @@
     ],
     [
       "Макс. скорость в прицеле",
-      "Target maximum speed in the crosshair"
+      "Target maximum speed"
     ],
     [
       "Модификация показывает максимально достижимую скорость (не фактическую) у заблокированной в прицеле цели.\nРаботает с любым прицелом.\nЗаменяет информацию о дистанции обнаружения.",
@@ -690,7 +690,7 @@
     ],
     [
       "Индикаторы «Солнце»",
-      "«Sonne» Indicators"
+      "\"Sonne\" Indicators"
     ],
     [
       "Модифицированные маркеры обнаружения корабля.",
@@ -834,7 +834,7 @@
     ],
     [
       "Ленты Флаги",
-      "\"Flags\" Ribbons"
+      "Flags Ribbons"
     ],
     [
       "Модификация боевых лент.",
@@ -874,7 +874,7 @@
     ],
     [
       "Удаление всех флагов",
-      "Remove All Flags and Signals"
+      "Remove Flags and Signals"
     ],
     [
       "Модификация удаляет визуальное отображение установленных сигналов и флагов на корабле.",
@@ -2070,7 +2070,7 @@
     ],
     [
       "Простой экран загрузки боя",
-      "Simple battle loading screen + Minimap"
+      "Simple + Minimap"
     ],
     [
       "Модификация отображает миникарту на загрузочном экране боя, в центре, вместе с панелями игроков.",
@@ -2078,7 +2078,7 @@
     ],
     [
       "Расширенный экран загрузки боя",
-      "Extended battle loading screen + Minimap"
+      "Extended + Minimap"
     ],
     [
       "Модификация отображает миникарту и дополнительную информацию об игроках на загрузочном экране боя. Имеется возможность настройки.",
@@ -2350,7 +2350,7 @@
     ],
     [
       "Отображение дымов на карте",
-      "Display Smoke on Minimap"
+      "Smoke on Minimap"
     ],
     [
       "Модификация отображает на миникарте все дымовые завесы в бою.",
@@ -2358,7 +2358,7 @@
     ],
     [
       "Отображение торпед на карте",
-      "Display Torpedoes on Minimap"
+      "Torpedoes on Minimap"
     ],
     [
       "Модификация отображает на миникарте все союзный и обнаруженные вражеские торпеды в бою.",
@@ -2910,7 +2910,7 @@
     ],
     [
       "Удаление тумана и бликов",
-      "Remove Fog and Glare"
+      "No Fog and Glare"
     ],
     [
       "Модификация удаляет отображение тумана и бликов на картах.",
@@ -2926,7 +2926,7 @@
     ],
     [
       "Удаление тумана и бликов + спокойное море",
-      "Remove Fog and Glare + Calm Sea"
+      "Calm Sea + No Fog and Glare"
     ],
     [
       "Модификация удаляет отображение тумана и бликов на картах а также волны на море.",
@@ -3198,7 +3198,7 @@
     ],
     [
       "Синие трассеры пулемётов",
-      "Blue Machine Gun Tracers"
+      "Blue Tracers"
     ],
     [
       "Модификация заменяет трассеры у пулемётов истребителей и штурмовиков на яркие синего цвета.",
@@ -3206,7 +3206,7 @@
     ],
     [
       "Зелёные трассеры пулемётов",
-      "Green Machine Gun Tracers"
+      "Green Tracers"
     ],
     [
       "Модификация заменяет трассеры у пулемётов истребителей и штурмовиков на яркие зелёного цвета.",
@@ -3214,7 +3214,7 @@
     ],
     [
       "Красные трассеры пулемётов",
-      "Red Machine Gun Tracers"
+      "Red Tracers"
     ],
     [
       "Модификация заменяет трассеры у пулемётов истребителей и штурмовиков на яркие красного цвета.",
@@ -3302,7 +3302,7 @@
     ],
     [
       "Удаление отрисовки зоны поражения",
-      "Remove the effect of damaged areas on the ship."
+      "Remove damaged effect"
     ],
     [
       "Klein Field — Синий",
@@ -3539,6 +3539,66 @@
     [
       "Модификация возвращает звуки выстрелов ГК для орудий калибром 76–190 мм, которые были в игре до версии 13.6",
       "The mod restores the main battery firing sounds for 76–190 mm caliber guns that were in the game before version 13.6."
+    ],
+    [
+      "MK Hero",
+      "MK Hero"
+    ],
+    [
+      "Модификация показывает прогресс получения некоторых достижений в бою.",
+      "The modification shows the progress of obtaining some achievements in battle."
+    ],
+    [
+      "Форт Эребус",
+      "Fort Erebus"
+    ],
+    [
+      "Секретная заброшенная база Альянса, находящаяся на островах Гримсби в Южной Атлантике. Тематический порт события 'Ваффентрагер: Изоляция' из версии 25.10",
+      "Secret abandoned Alliance base located on the Grimsby Islands in the South Atlantic. Thematic port of the event \"Waffentrager: Isolation\" from version 25.10"
+    ],
+    [
+      "Таранто",
+      "Taranto"
+    ],
+    [
+      "Немножко старой доброй Италии.",
+      "A bit of good old Italy."
+    ],
+    [
+      "Nomogram Classic Improve",
+      "Nomogram Classic Improve"
+    ],
+    [
+      "Для активации мода необходимо выбрать динамический прицел в настройках игры.",
+      "To activate the mod, you need to select the dynamic crosshair in the game settings."
+    ],
+    [
+      "Панели «Tactical-Tech»",
+      "Tactical-Tech Panels"
+    ],
+    [
+      "Панели игроков с отображением в перспективе и анимацией. Отображают засвет, использование рем.команд, пожар, затопления и другое. При установленном ластомере отображают цвета процента побед. При клике на панель своей команды - выравниваются и отображаются прямо.",
+      "Player panels with perspective display and animation. Show spotting, DCP/repair usage, fire, flooding, and other things. With Lastomer installed, they display win percentage colors. Clicking on your team's panel to align and display them vertically."
+    ],
+    [
+      "Внимание! Eсли вы используете мод миникарты от BattleFrame, то установка данного мода для вас не обязательна! Миникарта умеет отображать торпеды по-умолчанию.",
+      "Attention! If you are using the minimap mod by Battleframe, then installing this mod is not necessary for you! The minimap can display torpedoes by default."
+    ],
+    [
+      "Blue Team",
+      "Blue Team"
+    ],
+    [
+      "Мод изменяет цвет союзников и некоторые другие элементы интерфейса с зеленого на синий, как это было на общем тесте версии 25.9.",
+      "The mod changes the color of allies and some other interface elements from green to blue, as it was in the general test of version 25.9."
+    ],
+    [
+      "Перкоголик",
+      "Perkaholic"
+    ],
+    [
+      "Мод добавляет изученные перки, во всплывающие подсказки командиров.",
+      "The mod adds learned skills to the commander's tooltips."
     ]
   ]
 }
